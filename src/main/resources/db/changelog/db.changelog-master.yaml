@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: CREATE_TABLE_VOTER
+      author: tales.viegas
+      sqlFile:
+        path: "scripts/001.CREATE_TABLE_VOTER.sql"
+        relativeToChangelogFile: true
+      rollbackFile:
+        path: "scripts/001.CREATE_TABLE_VOTER.rollback.sql"
+        relativeToChangelogFile: true
