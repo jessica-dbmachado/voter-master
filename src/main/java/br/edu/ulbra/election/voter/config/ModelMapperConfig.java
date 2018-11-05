@@ -7,8 +7,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModelMapperConfig {
 
-    @Bean
+	@Bean
     public ModelMapper modelMapper() {
+    	ModelMapper modelMapper = new ModelMapper();
+    	modelMapper.getConfiguration().setAmbiguityIgnored(true);
         return new ModelMapper();
     }
 
