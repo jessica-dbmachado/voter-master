@@ -97,12 +97,17 @@ public class VoterService {
     }
 
     private void validateInput(VoterInput voterInput, boolean isUpdate){
-        if (StringUtils.isBlank(voterInput.getEmail())){
+        if (StringUtils.isBlank(voterInput.getEmail() ) ){
             throw new GenericOutputException("Invalid email");
         }
         if (StringUtils.isBlank(voterInput.getName())){
             throw new GenericOutputException("Invalid name");
         }
+        
+        if (voterInput.getName().length() < 5){
+            throw new GenericOutputException("Short name, must have more than 5 letters");
+        }
+        
         if (!StringUtils.isBlank(voterInput.getPassword())){
             if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
                 throw new GenericOutputException("Passwords doesn't match");
