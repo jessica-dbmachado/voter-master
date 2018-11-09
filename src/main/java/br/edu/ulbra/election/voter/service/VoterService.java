@@ -27,6 +27,7 @@ public class VoterService {
 
     private static final String MESSAGE_INVALID_ID = "Invalid id";
     private static final String MESSAGE_VOTER_NOT_FOUND = "Voter not found";
+   
 
     @Autowired
     public VoterService(VoterRepository voterRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder){
@@ -37,8 +38,11 @@ public class VoterService {
 
     public List<VoterOutput> getAll(){
         Type voterOutputListType = new TypeToken<List<VoterOutput>>(){}.getType();
+     
         return modelMapper.map(voterRepository.findAll(), voterOutputListType);
     }
+    
+    
 
     public VoterOutput create(VoterInput voterInput) {
         validateInput(voterInput, false);
@@ -68,6 +72,7 @@ public class VoterService {
         validateInput(voterInput, true);
 
         Voter voter = voterRepository.findById(voterId).orElse(null);
+        
         if (voter == null){
             throw new GenericOutputException(MESSAGE_VOTER_NOT_FOUND);
         }
@@ -87,6 +92,7 @@ public class VoterService {
         }
 
         Voter voter = voterRepository.findById(voterId).orElse(null);
+
         if (voter == null){
             throw new GenericOutputException(MESSAGE_VOTER_NOT_FOUND);
         }
@@ -117,6 +123,15 @@ public class VoterService {
                 throw new GenericOutputException("Password doesn't match");
             }
         }
+        
+        //validate is has lastname
+        if(voterInput.getName().indexOf(" ") == -1){
+        	{
+        		throw new GenericOutputException("Please add your last name as well");
+        	}
+        }
+        
+        
     }
 
 }

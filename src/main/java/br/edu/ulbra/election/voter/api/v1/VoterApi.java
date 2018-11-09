@@ -33,6 +33,7 @@ public class VoterApi {
         return voterService.getById(voterId);
     }
 
+    
     @PostMapping("/")
     @ApiOperation(value = "Create new voter")
     public VoterOutput create(@RequestBody VoterInput voterInput){
