@@ -1,5 +1,6 @@
 package br.edu.ulbra.election.voter.service;
 
+import br.edu.ulbra.election.voter.config.Criptografia;
 import br.edu.ulbra.election.voter.exception.GenericOutputException;
 import br.edu.ulbra.election.voter.input.v1.VoterInput;
 import br.edu.ulbra.election.voter.model.Voter;
@@ -23,14 +24,14 @@ public class VoterService {
 
     private final ModelMapper modelMapper;
 
-    private final PasswordEncoder passwordEncoder;
+    private final Criptografia passwordEncoder;
 
     private static final String MESSAGE_INVALID_ID = "Invalid id";
     private static final String MESSAGE_VOTER_NOT_FOUND = "Voter not found";
    
 
     @Autowired
-    public VoterService(VoterRepository voterRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder){
+    public VoterService(VoterRepository voterRepository, ModelMapper modelMapper, Criptografia passwordEncoder){
         this.voterRepository = voterRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -47,7 +48,7 @@ public class VoterService {
     public VoterOutput create(VoterInput voterInput) {
         validateInput(voterInput, false);
         Voter voter = modelMapper.map(voterInput, Voter.class);
-        voter.setPassword(passwordEncoder.encode(voter.getPassword()));
+        voter.setPassword(passwordEncoder.criptografar(voter.getPassword()));
         voter = voterRepository.save(voter);
         return modelMapper.map(voter, VoterOutput.class);
     }
@@ -80,7 +81,7 @@ public class VoterService {
         voter.setEmail(voterInput.getEmail());
         voter.setName(voterInput.getName());
         if (!StringUtils.isBlank(voterInput.getPassword())) {
-            voter.setPassword(passwordEncoder.encode(voterInput.getPassword()));
+            voter.setPassword(passwordEncoder.criptografar(voterInput.getPassword()));
         }
         voter = voterRepository.save(voter);
         return modelMapper.map(voter, VoterOutput.class);

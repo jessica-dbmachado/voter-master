@@ -37,6 +37,7 @@ public class VoterInput {
     }
 
     public void setPassword(String password) {
+    	
         this.password = password;
     }
 
@@ -45,6 +46,6 @@ public class VoterInput {
     }
 
     public void setPasswordConfirm(String passwordConfirm) {
-        this.passwordConfirm = passwordConfirm;
+        this.passwordConfirm =  passwordConfirm;
     }
 }
