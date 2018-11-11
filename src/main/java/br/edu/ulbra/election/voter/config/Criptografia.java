@@ -1,6 +1,7 @@
 package br.edu.ulbra.election.voter.config;
 import java.security.*;
 
+// criptografia em MD5
 public class Criptografia {
 	
 	

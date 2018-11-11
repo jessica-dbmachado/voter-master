@@ -48,8 +48,24 @@ public class VoterService {
     public VoterOutput create(VoterInput voterInput) {
         validateInput(voterInput, false);
         Voter voter = modelMapper.map(voterInput, Voter.class);
-        voter.setPassword(passwordEncoder.criptografar(voter.getPassword()));
+       
+        //Ao criar um eleitor ou alterar a senha, deve verificar se a senha é igual à confirmação
+        if (!StringUtils.isBlank(voterInput.getPassword())) {
+        	if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
+                throw new GenericOutputException("Passwords doesn't match");
+            }
+        	else {
+          
+            	voter.setPassword(passwordEncoder.criptografar(voter.getPassword()));
+        	
+        	}  	 
         voter = voterRepository.save(voter);
+        }
+        else {
+        	throw new GenericOutputException(" the password should not be empty");
+        	
+        }
+        
         return modelMapper.map(voter, VoterOutput.class);
     }
 
@@ -80,7 +96,12 @@ public class VoterService {
 
         voter.setEmail(voterInput.getEmail());
         voter.setName(voterInput.getName());
+        
+        //Ao criar um eleitor ou alterar a senha, deve verificar se a senha é igual à confirmação
         if (!StringUtils.isBlank(voterInput.getPassword())) {
+        	if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
+                throw new GenericOutputException("Passwords doesn't match");
+            }else
             voter.setPassword(passwordEncoder.criptografar(voterInput.getPassword()));
         }
         voter = voterRepository.save(voter);
