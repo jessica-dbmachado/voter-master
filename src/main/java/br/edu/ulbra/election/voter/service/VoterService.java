@@ -48,25 +48,13 @@ public class VoterService {
     public VoterOutput create(VoterInput voterInput) {
         validateInput(voterInput, false);
         Voter voter = modelMapper.map(voterInput, Voter.class);
-       
-        //Ao criar um eleitor ou alterar a senha, deve verificar se a senha é igual à confirmação
-        if (!StringUtils.isBlank(voterInput.getPassword())) {
-        	if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
-                throw new GenericOutputException("Passwords doesn't match");
-            }
-        	else {
-          
-            	voter.setPassword(passwordEncoder.criptografar(voter.getPassword()));
-        	
-        	}  	 
-        voter = voterRepository.save(voter);
-        }
-        else {
-        	throw new GenericOutputException(" the password should not be empty");
-        	
-        }
+      
         
-        return modelMapper.map(voter, VoterOutput.class);
+        voterInput.setPassword(passwordEncoder.criptografar(voterInput.getPassword()));
+    	
+       
+        voter = voterRepository.save(voter);
+         return modelMapper.map(voter, VoterOutput.class);
     }
 
     public VoterOutput getById(Long voterId){
@@ -127,7 +115,17 @@ public class VoterService {
     private void validateInput(VoterInput voterInput, boolean isUpdate){
         if (StringUtils.isBlank(voterInput.getEmail() ) ){
             throw new GenericOutputException("Invalid email");
-        }
+        }else {
+        	
+            //Verifica Email
+              
+        	 if(getAll().contains(voterInput.getEmail())) {
+        		 
+        		 throw new GenericOutputException("This Email is already registered, please try another email Adress");
+        	 }
+        	   
+          }
+        
         if (StringUtils.isBlank(voterInput.getName())){
             throw new GenericOutputException("Invalid name");
         }
@@ -135,16 +133,18 @@ public class VoterService {
         if (voterInput.getName().length() < 5){
             throw new GenericOutputException("Short name, must have more than 5 letters");
         }
-        
-        if (!StringUtils.isBlank(voterInput.getPassword())){
-            if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
+        //Ao criar um eleitor ou alterar a senha, deve verificar se a senha é igual à confirmação
+        if (!StringUtils.isBlank(voterInput.getPassword())) {
+        	if (!voterInput.getPassword().equals(voterInput.getPasswordConfirm())){
                 throw new GenericOutputException("Passwords doesn't match");
             }
-        } else {
-            if (!isUpdate) {
-                throw new GenericOutputException("Password doesn't match");
+         }	 
+            else {
+            	throw new GenericOutputException(" the password should not be empty");
+            	
             }
-        }
+       
+        
         
         //validate is has lastname
         if(voterInput.getName().indexOf(" ") == -1){
