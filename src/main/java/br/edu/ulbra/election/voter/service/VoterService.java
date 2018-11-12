@@ -116,14 +116,13 @@ public class VoterService {
         if (StringUtils.isBlank(voterInput.getEmail() ) ){
             throw new GenericOutputException("Invalid email");
         }else {
-        	
-            //Verifica Email
-              
-        	 if(getAll().contains(voterInput.getEmail())) {
-        		 
-        		 throw new GenericOutputException("This Email is already registered, please try another email Adress");
+        		//busca email do input no repositorio e armazena na variavel para verificar dps
+        	 String email = voterRepository.findByEmail(voterInput.getEmail()).orElse(null);
+        	 
+        	 if (email != null)
+        	 {
+            	  throw new GenericOutputException("Email already registered!");
         	 }
-        	   
           }
         
         if (StringUtils.isBlank(voterInput.getName())){
