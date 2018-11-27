@@ -1,5 +1,6 @@
 package br.edu.ulbra.election.voter.service;
 
+import br.edu.ulbra.election.voter.client.ElectionClientService;
 import br.edu.ulbra.election.voter.exception.GenericOutputException;
 import br.edu.ulbra.election.voter.input.v1.VoterInput;
 import br.edu.ulbra.election.voter.model.Voter;
@@ -25,14 +26,17 @@ public class VoterService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final ElectionClientService electionClientService;
+
     private static final String MESSAGE_INVALID_ID = "Invalid id";
     private static final String MESSAGE_VOTER_NOT_FOUND = "Voter not found";
 
     @Autowired
-    public VoterService(VoterRepository voterRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder){
+    public VoterService(VoterRepository voterRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, ElectionClientService electionClientService){
         this.voterRepository = voterRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.electionClientService = electionClientService;
     }
 
     public List<VoterOutput> getAll(){
@@ -91,6 +95,11 @@ public class VoterService {
         Voter voter = voterRepository.findById(voterId).orElse(null);
         if (voter == null){
             throw new GenericOutputException(MESSAGE_VOTER_NOT_FOUND);
+        }
+
+        GenericOutput genericOutput = electionClientService.findVotesByVoter(voter.getId());
+        if (!genericOutput.getMessage().equals("0")){
+            throw new GenericOutputException("Voter already voted");
         }
 
         voterRepository.delete(voter);
